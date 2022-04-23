@@ -4,16 +4,17 @@ from torch.utils.data import DataLoader, Dataset
 
 import numpy as np
 import pandas as pd
+import random
 
 import GTKutils
 
 
-# torch.manual_seed(0)
-#
-# g = torch.Generator()
-# g.manual_seed(0)
-#
-# np.random.seed(0)
+torch.manual_seed(0)
+
+g = torch.Generator()
+g.manual_seed(0)
+
+np.random.seed(0)
 
 
 class DatasetSplit(Dataset):
@@ -69,15 +70,23 @@ class GKTClientTrainer(object):
     def update_large_model_logits(self, logits):
         self.server_logits_dict = logits
 
+    # for REPRODUCIBILITY https://pytorch.org/docs/stable/notes/randomness.html
+    def seed_worker(worker_id):
+        worker_seed = torch.initial_seed() % 2**32
+        np.random.seed(worker_seed)
+        random.seed(worker_seed)
+
     def train_test(self, train_dataset, test_dataset, idxs):
         """
         Returns train and test dataloaders for a given dataset
         and user indexes.
         """
         trainloader = DataLoader(DatasetSplit(train_dataset, idxs),
-                                 batch_size=self.local_batch_size, shuffle=True)
+                                 batch_size=self.local_batch_size, shuffle=True, generator=g,
+                                 worker_init_fn=self.seed_worker)
         testloader = DataLoader(test_dataset,
-                                batch_size=self.local_batch_size, shuffle=False)
+                                batch_size=self.local_batch_size, shuffle=False, generator=g,
+                                worker_init_fn=self.seed_worker)
 
         return trainloader, testloader
 

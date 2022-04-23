@@ -9,7 +9,7 @@ norm_type = "BatchNorm"
 
 
 # function that let you choose between BatchNorm and GroupNorm
-def Norm(planes, type="BatchNorm", num_groups=8):
+def Norm(planes, type="BatchNorm", num_groups=4):
     if type == "BatchNorm":
         return nn.BatchNorm2d(planes)
     if type == "GroupNorm":

@@ -5,6 +5,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset, SubsetRandomSampler
 
 import numpy as np
+import random
 
 torch.manual_seed(0)
 
@@ -52,6 +53,13 @@ class LocalUpdate(object):
         self.trainloader, self.testloader = self.train_test(
             dataset, list(idxs))  # get train, valid sets
 
+    # for REPRODUCIBILITY https://pytorch.org/docs/stable/notes/randomness.html
+    def seed_worker(worker_id):
+        worker_seed = torch.initial_seed() % 2**32
+        np.random.seed(worker_seed)
+        random.seed(worker_seed)
+
+
     def train_test(self, dataset, idxs):
         """
         Returns train, validation and test dataloaders for a given dataset
@@ -61,9 +69,11 @@ class LocalUpdate(object):
         idxs_test = idxs[int(0.9 * len(idxs)):]
 
         trainloader = DataLoader(DatasetSplit(dataset, idxs_train),
-                                 batch_size=self.local_batch_size, shuffle=True, generator=g)
+                                 batch_size=self.local_batch_size, shuffle=True, generator=g,
+                                 worker_init_fn=self.seed_worker)
         testloader = DataLoader(DatasetSplit(dataset, idxs_test),
-                                batch_size=max(int(len(idxs_test) / 10), 1), shuffle=False, generator=g)
+                                batch_size=max(int(len(idxs_test) / 10), 1), shuffle=False, generator=g,
+                                worker_init_fn=self.seed_worker)
 
         return trainloader, testloader
 

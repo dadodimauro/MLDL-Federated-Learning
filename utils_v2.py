@@ -9,6 +9,7 @@ import torchvision.transforms as transforms
 import copy
 
 import numpy as np
+import random
 
 torch.manual_seed(0)
 
@@ -60,12 +61,14 @@ def get_dict_labels(server_id, server_labels):
 
 # Define for n clients how many images to take
 def random_number_images(n, server_id):
+    # for REPRODUCIBILITY https://pytorch.org/docs/stable/notes/randomness.html
     SEED = 1
     random.seed(SEED)
     np.random.seed(SEED)
     torch.manual_seed(SEED)
     torch.cuda.manual_seed(SEED)
     torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms(True)
 
     left = len(server_id)
     items = []

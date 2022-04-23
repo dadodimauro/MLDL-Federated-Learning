@@ -68,7 +68,7 @@ def random_number_images(n, server_id):
     torch.manual_seed(SEED)
     torch.cuda.manual_seed(SEED)
     torch.backends.cudnn.deterministic = True
-    torch.use_deterministic_algorithms(True)
+    # torch.use_deterministic_algorithms(True)
 
     left = len(server_id)
     items = []

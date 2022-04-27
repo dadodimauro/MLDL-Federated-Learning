@@ -73,6 +73,7 @@ class GKTServerTrainer:
                                  extracted_feature_dict_test, labels_dict_test):
         print("add model - client_id = %d" % idx)
 
+        # TODO not needed to store
         self.client_extracted_feature_dict[idx] = extracted_feature_dict
         self.client_logits_dict[idx] = logits_dict
         self.client_labels_dict[idx] = labels_dict
@@ -81,6 +82,7 @@ class GKTServerTrainer:
 
         self.flag_client_model_uploaded_dict[idx] = True
 
+    # TODO remove
     # check if all data from clients is received
     def check_whether_all_receive(self):
         for idx in range(self.num_users):
@@ -102,6 +104,20 @@ class GKTServerTrainer:
         # https://pytorch.org/docs/stable/optim.html#torch.optim.lr_scheduler.ReduceLROnPlateau
         self.scheduler.step(self.best_acc, epoch=communication_round)
 
+        # clean all client data (in order to avoid allocating too much data in RAM)
+        # TODO check if this loop in necessary
+        for client_index in idxs_chosen_users:
+            self.client_extracted_feature_dict[client_index].clear()
+            self.client_logits_dict[client_index].clear()
+            self.client_labels_dict[client_index].clear()
+            self.client_extracted_feauture_dict_test[client_index].clear()
+            self.client_labels_dict_test[client_index].clear()
+        self.client_extracted_feature_dict.clear()
+        self.client_logits_dict.clear()
+        self.client_labels_dict.clear()
+        self.client_extracted_feauture_dict_test.clear()
+        self.client_labels_dict_test.clear()
+
     def train_and_eval(self, round_idx, epochs, idxs_chosen_users):
         for epoch in range(1, epochs+1):
             print("train_and_eval - round_idx = %d, epoch = %d" % (round_idx, epoch))
@@ -120,6 +136,10 @@ class GKTServerTrainer:
                 test_acc = test_metrics['test_accuracy']
                 if test_acc >= self.best_acc:
                     self.best_acc = test_acc
+
+                # update loss and accuracy list
+                self.loss_list.append(test_metrics['test_loss'])
+                self.acc_list.append(test_metrics['test_accuracy'])
 
     def train_large_model_on_the_server(self, idxs_chosen_users):
         # clear the server side logits
@@ -204,10 +224,6 @@ class GKTServerTrainer:
 
         metrics_string = " ; ".join("{}: {:05.3f}".format(k, v) for k, v in train_metrics.items())
         print("\n- TRAIN METRICS: " + metrics_string + "\n")
-
-        # update loss and accuracy list
-        self.loss_list.extend(loss_avg.get_list())
-        self.acc_list.extend(acc_avg.get_list())
 
         return train_metrics
 

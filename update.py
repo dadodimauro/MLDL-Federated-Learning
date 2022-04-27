@@ -2,6 +2,7 @@
 
 import torch
 from torch import nn
+from torch.optim.lr_scheduler import ConstantLR
 from torch.utils.data import DataLoader, Dataset, SubsetRandomSampler
 
 import numpy as np
@@ -119,6 +120,7 @@ class LocalUpdate(object):
                 _, predicted_outputs = torch.max(output.data, 1)
                 # Update the running corrects
                 correct_train += (predicted_outputs == labels).float().sum().item()
+
 
             # calculate average losses
             train_loss = train_loss / len(self.trainloader.dataset)

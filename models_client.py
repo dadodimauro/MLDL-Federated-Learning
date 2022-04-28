@@ -3,8 +3,9 @@ import torch.nn as nn
 
 norm_type = "BatchNorm"
 
+
 # function that let you choose between BatchNorm and GroupNorm
-def Norm(planes, type="BatchNorm", num_groups=2):
+def Norm(planes, type="BatchNorm", num_groups=4):
     if type == "BatchNorm":
         return nn.BatchNorm2d(planes)
     if type == "GroupNorm":

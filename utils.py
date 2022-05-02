@@ -8,12 +8,12 @@ import copy
 
 import numpy as np
 
-torch.manual_seed(0)
+torch.manual_seed(1)
 
 g = torch.Generator()
-g.manual_seed(0)
+g.manual_seed(1)
 
-np.random.seed(0)
+np.random.seed(1)
 
 def average_weights(w):
     """

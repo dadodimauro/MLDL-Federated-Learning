@@ -11,12 +11,12 @@ import copy
 import numpy as np
 import random
 
-torch.manual_seed(0)
+torch.manual_seed(1)
 
 g = torch.Generator()
-g.manual_seed(0)
+g.manual_seed(1)
 
-np.random.seed(0)
+np.random.seed(1)
 
 
 def average_weights(w):
@@ -62,7 +62,7 @@ def get_dict_labels(server_id, server_labels):
 # Define for n clients how many images to take
 def random_number_images(n, server_id):
     # for REPRODUCIBILITY https://pytorch.org/docs/stable/notes/randomness.html
-    SEED = 1
+    SEED = 2
     random.seed(SEED)
     np.random.seed(SEED)
     torch.manual_seed(SEED)

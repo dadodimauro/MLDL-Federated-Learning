@@ -8,12 +8,13 @@ import copy
 
 import numpy as np
 
-torch.manual_seed(1)
+torch.manual_seed(0)
 
 g = torch.Generator()
-g.manual_seed(1)
+g.manual_seed(0)
 
-np.random.seed(1)
+np.random.seed(0)
+
 
 def average_weights(w):
     """
@@ -25,6 +26,28 @@ def average_weights(w):
         for i in range(1, len(w)):
             w_avg[key] += w[i][key]
         w_avg[key] = torch.div(w_avg[key], len(w))
+    return w_avg
+
+
+def weighted_average_weights(w, user_groups, idxs_users):
+    """
+    Returns the weighted average of the weights.
+    """
+    n_list = []
+    for idx in idxs_users:
+        n_list.append(len(user_groups[idx]))
+
+    if len(n_list) != len(w):
+        print("ERROR IN WEIGHTED AVERAGE!")
+
+    w_avg = copy.deepcopy(w[0])  # deepcopy of the weights in a local variable
+
+    # compute the mean
+    for key in w_avg.keys():
+        for i in range(1, len(w)):
+            # w_avg[key] += w_avg[key] + torch.mul(w[i][key], n_list[i]/sum(n_list))
+            w_avg[key] += torch.mul(w[i][key], n_list[i]/sum(n_list)).long()
+
     return w_avg
 
 
@@ -55,7 +78,7 @@ def cifar_noniid(dataset, num_users):
     num_shards, num_imgs = 200, 250
     idx_shard = [i for i in range(num_shards)]
     dict_users = {i: np.array([]) for i in range(num_users)}
-    idxs = np.arange(num_shards * num_imgs) # 250*200=50000 -> train dataset dimension
+    idxs = np.arange(num_shards * num_imgs)  # 250*200=50000 -> train dataset dimension
     # labels = dataset.targets.numpy()
     labels = np.array(dataset.targets)
 
@@ -88,7 +111,7 @@ def cifar_noniid_unbalanced(dataset, num_users):
     num_shards, num_imgs = 1000, 50
     idx_shard = [i for i in range(num_shards)]
     dict_users = {i: np.array([]) for i in range(num_users)}
-    idxs = np.arange(num_shards*num_imgs)
+    idxs = np.arange(num_shards * num_imgs)
     # labels = dataset.targets.numpy()
     labels = np.array(dataset.targets)
 
@@ -103,7 +126,7 @@ def cifar_noniid_unbalanced(dataset, num_users):
 
     # Divide the shards into random chunks for every client
     # such that the sum of these chunks = num_shards
-    random_shard_size = np.random.randint(min_shard, max_shard+1,
+    random_shard_size = np.random.randint(min_shard, max_shard + 1,
                                           size=num_users)
     random_shard_size = np.around(random_shard_size /
                                   sum(random_shard_size) * num_shards)
@@ -119,10 +142,10 @@ def cifar_noniid_unbalanced(dataset, num_users):
             idx_shard = list(set(idx_shard) - rand_set)
             for rand in rand_set:
                 dict_users[i] = np.concatenate(
-                    (dict_users[i], idxs[rand*num_imgs:(rand+1)*num_imgs]),
+                    (dict_users[i], idxs[rand * num_imgs:(rand + 1) * num_imgs]),
                     axis=0)
 
-        random_shard_size = random_shard_size-1
+        random_shard_size = random_shard_size - 1
 
         # Next, randomly assign the remaining shards
         for i in range(num_users):
@@ -136,7 +159,7 @@ def cifar_noniid_unbalanced(dataset, num_users):
             idx_shard = list(set(idx_shard) - rand_set)
             for rand in rand_set:
                 dict_users[i] = np.concatenate(
-                    (dict_users[i], idxs[rand*num_imgs:(rand+1)*num_imgs]),
+                    (dict_users[i], idxs[rand * num_imgs:(rand + 1) * num_imgs]),
                     axis=0)
     else:
 
@@ -147,7 +170,7 @@ def cifar_noniid_unbalanced(dataset, num_users):
             idx_shard = list(set(idx_shard) - rand_set)
             for rand in rand_set:
                 dict_users[i] = np.concatenate(
-                    (dict_users[i], idxs[rand*num_imgs:(rand+1)*num_imgs]),
+                    (dict_users[i], idxs[rand * num_imgs:(rand + 1) * num_imgs]),
                     axis=0)
 
         if len(idx_shard) > 0:
@@ -160,7 +183,7 @@ def cifar_noniid_unbalanced(dataset, num_users):
             idx_shard = list(set(idx_shard) - rand_set)
             for rand in rand_set:
                 dict_users[k] = np.concatenate(
-                    (dict_users[k], idxs[rand*num_imgs:(rand+1)*num_imgs]),
+                    (dict_users[k], idxs[rand * num_imgs:(rand + 1) * num_imgs]),
                     axis=0)
 
     return dict_users

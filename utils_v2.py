@@ -11,12 +11,12 @@ import copy
 import numpy as np
 import random
 
-torch.manual_seed(1)
+torch.manual_seed(0)
 
 g = torch.Generator()
-g.manual_seed(1)
+g.manual_seed(0)
 
-np.random.seed(1)
+np.random.seed(0)
 
 
 def average_weights(w):
@@ -29,6 +29,30 @@ def average_weights(w):
         for i in range(1, len(w)):
             w_avg[key] += w[i][key]
         w_avg[key] = torch.div(w_avg[key], len(w))
+    return w_avg
+
+
+def weighted_average_weights(w, user_groups, idxs_users):
+    """
+    Returns the weighted average of the weights.
+    """
+    n_list = []
+    for idx in idxs_users:
+        n_list.append(len(user_groups[idx]))
+
+    if len(n_list) != len(w):
+        print("ERROR IN WEIGHTED AVERAGE!")
+
+    w_avg = copy.deepcopy(w[0])  # deepcopy of the weights in a local variable
+    # compute the mean
+    for key in w_avg.keys():
+        # for i in range(1, len(w)):
+        #     w_avg[key] += w[i][key]
+        #     w_avg[key] = torch.mul(w_avg[key], n_list[i]/sum(n_list))
+        for i in range(0, len(w)):
+            w_avg[key] = w_avg[key] + torch.mul(w[i][key], n_list[i]/sum(n_list))
+            # w_avg[key] += torch.mul(w[i][key], n_list[i]/sum(n_list))
+
     return w_avg
 
 
@@ -62,7 +86,7 @@ def get_dict_labels(server_id, server_labels):
 # Define for n clients how many images to take
 def random_number_images(n, server_id):
     # for REPRODUCIBILITY https://pytorch.org/docs/stable/notes/randomness.html
-    SEED = 2
+    SEED = 1
     random.seed(SEED)
     np.random.seed(SEED)
     torch.manual_seed(SEED)

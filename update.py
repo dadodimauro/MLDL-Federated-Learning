@@ -8,12 +8,12 @@ from torch.utils.data import DataLoader, Dataset, SubsetRandomSampler
 import numpy as np
 import random
 
-torch.manual_seed(1)
+torch.manual_seed(0)
 
 g = torch.Generator()
-g.manual_seed(1)
+g.manual_seed(0)
 
-np.random.seed(1)
+np.random.seed(0)
 
 
 class DatasetSplit(Dataset):
@@ -54,12 +54,16 @@ class LocalUpdate(object):
         self.trainloader, self.testloader = self.train_test(
             dataset, list(idxs))  # get train, valid sets
 
+        self.n_images = len(self.trainloader.dataset)
+
     # for REPRODUCIBILITY https://pytorch.org/docs/stable/notes/randomness.html
     def seed_worker(worker_id):
         worker_seed = torch.initial_seed() % 2**32
         np.random.seed(worker_seed)
         random.seed(worker_seed)
 
+    def get_n_images(self):
+        return self.n_images
 
     def train_test(self, dataset, idxs):
         """

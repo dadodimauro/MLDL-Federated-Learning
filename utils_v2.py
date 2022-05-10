@@ -44,14 +44,12 @@ def weighted_average_weights(w, user_groups, idxs_users):
         print("ERROR IN WEIGHTED AVERAGE!")
 
     w_avg = copy.deepcopy(w[0])  # deepcopy of the weights in a local variable
+
     # compute the mean
     for key in w_avg.keys():
-        # for i in range(1, len(w)):
-        #     w_avg[key] += w[i][key]
-        #     w_avg[key] = torch.mul(w_avg[key], n_list[i]/sum(n_list))
-        for i in range(0, len(w)):
-            w_avg[key] = w_avg[key] + torch.mul(w[i][key], n_list[i]/sum(n_list))
-            # w_avg[key] += torch.mul(w[i][key], n_list[i]/sum(n_list))
+        for i in range(1, len(w)):
+            # w_avg[key] += w_avg[key] + torch.mul(w[i][key], n_list[i]/sum(n_list))
+            w_avg[key] += torch.mul(w[i][key], n_list[i]/sum(n_list)).long()
 
     return w_avg
 

@@ -120,8 +120,6 @@ class LocalUpdate(object):
                 output = model(images)
 
                 # calculate the loss + the proximal term
-                _, pred = torch.max(output, 1)
-
                 proximal_term = 0.0
                 # iterate through the current and global model parameters
                 for w, w_t in zip(model.parameters(), global_model.parameters()):

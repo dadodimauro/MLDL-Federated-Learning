@@ -1,2 +1,2 @@
 # MLDL-Federated-Learning
- implementation of several algorithms in the Federated Learning setting
+ implementation of FedAVG, FedGKT, FedProx and Gradient Inversion Attack using CIFAR10 dataset and ResNet50

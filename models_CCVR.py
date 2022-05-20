@@ -121,27 +121,31 @@ class ResNet(nn.Module):
         out = self.layer3(out)
         out = self.layer4(out)
         out = F.avg_pool2d(out, 4)  # average pooling before fully connected layer
-        out = out.view(out.size(0), -1)
-        out = self.linear(out)
         return out
 
-    # def feature_extractor(self, x):
-    #     out = F.relu(self.bn1(self.conv1(x)))
-    #     out = self.layer1(out)
-    #     out = self.layer2(out)
-    #     out = self.layer3(out)
-    #     out = self.layer4(out)
-    #
-    #     return out
-    #
-    # def classifier(self, x):
-    #     out = F.avg_pool2d(x, 4)  # average pooling before fully connected layer
-    #     out = out.view(out.size(0), -1)
-    #     out = self.linear(out)
-    #     return out
 
-
-def ResNet50(n_type="BatchNorm"):
+def feature_extractor(n_type="BatchNorm"):
     global norm_type
     norm_type = n_type
     return ResNet(Bottleneck, [3, 4, 6, 3])
+
+
+class Classifier(nn.Module):
+    def __init__(self):
+        super(Classifier, self).__init__()
+
+        # network ends a 10-way fully-connected layer
+        expansion = 4
+        num_classes = 10
+
+        self.linear = nn.Linear(512 * expansion, num_classes)
+
+    def forward(self, x):
+        # out = F.avg_pool2d(x, 4)  # average pooling before fully connected layer
+        out = x.view(x.size(0), -1)
+        out = self.linear(out)
+        return out
+
+
+def classifier():
+    return Classifier()

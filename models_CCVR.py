@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import numpy as np
+
 norm_type = "BatchNorm"
 
 
@@ -121,6 +123,7 @@ class ResNet(nn.Module):
         out = self.layer3(out)
         out = self.layer4(out)
         out = F.avg_pool2d(out, 4)  # average pooling before fully connected layer
+        # out = F.avg_pool2d(out, 2)  # TOO LARGE VarCov Matrix 16GB instead of 1.6GB
         return out
 
 
@@ -136,12 +139,14 @@ class Classifier(nn.Module):
 
         # network ends a 10-way fully-connected layer
         expansion = 4
+        # expansion = 16
         num_classes = 10
 
         self.linear = nn.Linear(512 * expansion, num_classes)
 
     def forward(self, x):
         # out = F.avg_pool2d(x, 4)  # average pooling before fully connected layer
+
         out = x.view(x.size(0), -1)
         out = self.linear(out)
         return out

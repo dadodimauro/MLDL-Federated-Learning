@@ -10,4 +10,7 @@ each of the aforementioned algorithms we consider one of the
 most challenging problems in federated learning, which is dealing
 with non-IID data distribution, and compare the results.
 
+[Report]https://github.com/dadodimauro/MLDL-Federated-Learning/blob/bc19048f97a5415051cf06527c5b77f98ad64600/Project6_Group1_Report.pdf
+
+
 https://www.overleaf.com/read/tnxdvfxsqjzx

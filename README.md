@@ -15,3 +15,5 @@ with non-IID data distribution, and compare the results.
 [File with compiled tables] https://github.com/dadodimauro/MLDL-Federated-Learning/blob/b775decafa6aa228f8d0734a8408af7aff296d0e/Project6_Group1_TablesResults.pdf
 
 [Excel file with all results] https://github.com/dadodimauro/MLDL-Federated-Learning/blob/b775decafa6aa228f8d0734a8408af7aff296d0e/RESULT_SUMMARY.xlsx
+
+[Report Presentation] https://github.com/dadodimauro/MLDL-Federated-Learning/blob/021673edf0c42c97820c31ec9fda8d79452af9c2/Project6_Group1_ReportPresentation.pdf

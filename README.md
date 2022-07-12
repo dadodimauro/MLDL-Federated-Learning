@@ -11,5 +11,7 @@ most challenging problems in federated learning, which is dealing
 with non-IID data distribution, and compare the results.
 
 [Report] https://github.com/dadodimauro/MLDL-Federated-Learning/blob/bc19048f97a5415051cf06527c5b77f98ad64600/Project6_Group1_Report.pdf
+
 [File with compiled tables] https://github.com/dadodimauro/MLDL-Federated-Learning/blob/b775decafa6aa228f8d0734a8408af7aff296d0e/Project6_Group1_TablesResults.pdf
+
 [Excel file with all results] https://github.com/dadodimauro/MLDL-Federated-Learning/blob/b775decafa6aa228f8d0734a8408af7aff296d0e/RESULT_SUMMARY.xlsx

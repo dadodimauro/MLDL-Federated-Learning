@@ -1,5 +1,5 @@
 # MLDL-Federated-Learning
- In this report we analyze in depth different federated learning algorithms. We first start selecting a convolutional
+ In this project we analyze in depth different federated learning algorithms. We first start selecting a convolutional
 neural network and compute a baseline for reference; we then
 proceed to evaluate FedAVG, the first and most adopted solution
 in the federated scenario. Moreover, other federated algorithms
